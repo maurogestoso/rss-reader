@@ -21,7 +21,8 @@
     "lucide-react": "^0.548.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router": "^7.9.2"
+    "react-router": "^7.9.2",
+    "yargs": "^18.0.0"
   },
   "devDependencies": {
     "@react-router/dev": "^7.9.2",
@@ -29,6 +30,7 @@
     "@types/node": "^22",
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
+    "@types/yargs": "^17.0.34",
     "drizzle-kit": "^0.31.5",
     "tailwindcss": "^4.1.13",
     "tsx": "^4.20.6",
