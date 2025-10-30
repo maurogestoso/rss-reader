@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+body {
+  font-family:
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    Oxygen,
+    Ubuntu,
+    Cantarell,
+    "Open Sans",
+    "Helvetica Neue",
+    sans-serif;
+}
+
+h2 {
+  @apply my-2;
+}
+
+input {
+  @apply border border-black rounded-md px-1;
+}
