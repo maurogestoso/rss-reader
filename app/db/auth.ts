@@ -3,15 +3,13 @@ import { eq } from "drizzle-orm";
 import { usersTable } from "./schema";
 import { db } from ".";
 
+type NewUser = {password:string}&Omit<Omit<typeof usersTable.$inferInsert, "passwordHash">, "passwordSalt">;
+
 export async function createUser({
   name,
   email,
   password,
-}: {
-  name: string;
-  email: string;
-  password: string;
-}) {
+}: NewUser) {
   const passwordSalt = randomBytes(16);
   const passwordHash = scryptSync(password, passwordSalt, 16);
   const user: typeof usersTable.$inferInsert = {
