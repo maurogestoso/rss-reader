@@ -17,11 +17,13 @@
     "@react-router/serve": "^7.9.2",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.44.6",
+    "entities": "^7.0.0",
     "isbot": "^5.1.31",
     "lucide-react": "^0.548.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router": "^7.9.2",
+    "rss-parser": "^3.13.0",
     "yargs": "^18.0.0"
   },
   "devDependencies": {
