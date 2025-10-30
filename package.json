@@ -11,6 +11,7 @@
     "db:push": "npx drizzle-kit push"
   },
   "dependencies": {
+    "@dotenvx/dotenvx": "^1.51.0",
     "@libsql/client": "^0.15.15",
     "@react-router/node": "^7.9.2",
     "@react-router/serve": "^7.9.2",
