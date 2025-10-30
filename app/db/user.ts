@@ -5,6 +5,7 @@ import { usersTable } from "./schema";
 export async function getUser(userId: number) {
   const result = await db
     .select({
+      id: usersTable.id,
       name: usersTable.name,
       email: usersTable.email,
     })
