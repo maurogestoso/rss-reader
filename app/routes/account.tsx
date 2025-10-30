@@ -2,7 +2,6 @@ import { destroySession, getSession } from "~/sessions.server";
 import { getUser } from "~/db/user";
 import { Link, redirect } from "react-router";
 import type { Route } from "./+types/account";
-import { getPostsByUserId } from "~/db/posts";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -15,8 +14,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const user = await getUser(userId);
   if (!user) return redirect("/login");
 
-  const posts = await getPostsByUserId(userId);
-  return { user, posts };
+  return { user };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -29,7 +27,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Account({ loaderData }: Route.ComponentProps) {
-  const { user, posts } = loaderData;
+  const { user } = loaderData;
 
   return (
     <>
@@ -39,17 +37,6 @@ export default function Account({ loaderData }: Route.ComponentProps) {
           Log out
         </button>
       </form>
-      <br />
-      <h3 className="font-bold text-xl">Your posts</h3>
-      <ul className="list-disc list-inside">
-        {posts.map((post) => (
-          <li>
-            <a className="underline text-blue-600" href={post.url}>
-              {post.title}
-            </a>
-          </li>
-        ))}
-      </ul>
     </>
   );
 }
