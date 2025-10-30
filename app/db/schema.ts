@@ -14,6 +14,9 @@ export const feedsTable = sqliteTable("feeds", {
   link: text().notNull(),
   feedUrl: text().notNull(),
   lastUpdate: int({ mode: "timestamp" }),
+  userId: int()
+    .notNull()
+    .references(() => usersTable.id),
 });
 
 export const newItemsTable = sqliteTable("new_items", {
@@ -24,4 +27,7 @@ export const newItemsTable = sqliteTable("new_items", {
   feedId: int()
     .notNull()
     .references(() => feedsTable.id),
+  userId: int()
+    .notNull()
+    .references(() => usersTable.id),
 });
