@@ -15,7 +15,7 @@ export async function loader({ request }: Route.LoaderArgs) {
   const user = await getUser(userId);
   if (!user) return redirect("/login");
 
-  const newItems = await getAllNewItems();
+  const newItems = await getAllNewItems(user.id);
   console.info("home -> loader -> newItems", newItems);
 
   return { items: newItems };

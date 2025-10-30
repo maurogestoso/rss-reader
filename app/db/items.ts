@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from ".";
 import { feedsTable, newItemsTable } from "./schema";
 
-export async function getAllNewItems() {
+export async function getAllNewItems(userId: number) {
   return db
     .select({
       id: newItemsTable.id,
@@ -13,5 +13,6 @@ export async function getAllNewItems() {
       feedLink: feedsTable.link,
     })
     .from(newItemsTable)
+    .where(eq(newItemsTable.userId, userId))
     .innerJoin(feedsTable, eq(newItemsTable.feedId, feedsTable.id));
 }
