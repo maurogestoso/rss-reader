@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { db } from ".";
 import { feedsTable, newItemsTable } from "./schema";
 
@@ -15,4 +15,16 @@ export async function getAllNewItems(userId: number) {
     .from(newItemsTable)
     .where(eq(newItemsTable.userId, userId))
     .innerJoin(feedsTable, eq(newItemsTable.feedId, feedsTable.id));
+}
+
+export async function markItemAsRead({
+  userId,
+  itemId,
+}: {
+  userId: number;
+  itemId: number;
+}) {
+  return db
+    .delete(newItemsTable)
+    .where(and(eq(newItemsTable.id, itemId), eq(newItemsTable.userId, userId)));
 }
