@@ -57,9 +57,8 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
 function MarkAsRead({ itemId }: { itemId: number }) {
   return (
-    <form method="POST" action="/api/item">
+    <form method="POST" action="/api/items/read">
       <input type="hidden" value={itemId} name="itemId" />
-      <input type="hidden" value="read" name="action" />
       <button
         type="submit"
         className="underline text-xs cursor-pointer flex items-center gap-0.5"

@@ -19,3 +19,7 @@ export async function getAllUnreadItems() {
     .innerJoin(tItems, eq(tItems.id, tUnreadItems.id))
     .innerJoin(tFeeds, eq(tItems.feedId, tFeeds.id));
 }
+
+export async function markItemRead(id: number) {
+  return db.delete(tUnreadItems).where(eq(tUnreadItems.id, id));
+}
