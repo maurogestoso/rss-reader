@@ -1,19 +1,11 @@
 import { redirect } from "react-router";
 import type { Route } from "./+types/add-feed";
 
-import { getSession } from "~/sessions.server";
-import { getUser } from "~/db/user";
+import { ensureUser } from "~/sessions.server";
 import { insertFeed } from "~/db/feeds";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-
-  const userId = session.get("userId");
-  if (!userId) {
-    return redirect("/login");
-  }
-
-  const user = await getUser(userId);
+  const user = await ensureUser(request);
   if (!user) return redirect("/login");
 }
 

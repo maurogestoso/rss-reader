@@ -32,9 +32,8 @@ const { getSession, commitSession, destroySession } =
 
 export { getSession, commitSession, destroySession };
 
-export async function getUserFromSession(
-  session: Session<SessionData, SessionFlashData>,
-) {
+export async function ensureUser(request: Request) {
+  const session = await getSession(request.headers.get("Cookie"));
   const userId = session.get("userId");
   if (!userId) return null;
 

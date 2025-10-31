@@ -1,20 +1,13 @@
 import { Link, redirect } from "react-router";
 import type { Route } from "./+types/home";
-import { getSession } from "~/sessions.server";
-import { getUser } from "~/db/user";
+
+import { ensureUser } from "~/sessions.server";
 import { getAllUnreadItems } from "~/db/items";
-import { ArrowLeft, BookOpenCheck, MailPlus, Star } from "lucide-react";
+import { BookOpenCheck, MailPlus, Star } from "lucide-react";
 import Button from "~/ui/button";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-
-  const userId = session.get("userId");
-  if (!userId) {
-    return redirect("/login");
-  }
-
-  const user = await getUser(userId);
+  const user = await ensureUser(request);
   if (!user) return redirect("/login");
 
   const unreadItems = await getAllUnreadItems();

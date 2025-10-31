@@ -1,24 +1,16 @@
-import { destroySession, getSession } from "~/sessions.server";
-import { getUser } from "~/db/user";
 import { Link, redirect } from "react-router";
 import type { Route } from "./+types/account";
+
+import { destroySession, ensureUser, getSession } from "~/sessions.server";
 import { getAllFeeds } from "~/db/feeds";
 import Button from "~/ui/button";
 import { DoorOpen, MailPlus } from "lucide-react";
 
 export async function loader({ request }: Route.LoaderArgs) {
-  const session = await getSession(request.headers.get("Cookie"));
-
-  const userId = session.get("userId");
-  if (!userId) {
-    return redirect("/login");
-  }
-
-  const user = await getUser(userId);
+  const user = await ensureUser(request);
   if (!user) return redirect("/login");
 
   const feeds = await getAllFeeds();
-
   return { user, feeds };
 }
 
