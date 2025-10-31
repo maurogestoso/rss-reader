@@ -2,6 +2,7 @@ import { destroySession, getSession } from "~/sessions.server";
 import { getUser } from "~/db/user";
 import { Link, redirect } from "react-router";
 import type { Route } from "./+types/account";
+import { getAllFeeds } from "~/db/feeds";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -14,7 +15,9 @@ export async function loader({ request }: Route.LoaderArgs) {
   const user = await getUser(userId);
   if (!user) return redirect("/login");
 
-  return { user };
+  const feeds = await getAllFeeds();
+
+  return { user, feeds };
 }
 
 export async function action({ request }: Route.ActionArgs) {
@@ -27,7 +30,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Account({ loaderData }: Route.ComponentProps) {
-  const { user } = loaderData;
+  const { user, feeds } = loaderData;
 
   return (
     <>
@@ -37,6 +40,23 @@ export default function Account({ loaderData }: Route.ComponentProps) {
           Log out
         </button>
       </form>
+      <section>
+        <h2>Feeds:</h2>
+        {feeds.length ? (
+          feeds.map((feed) => (
+            <article>
+              <a href={feed.link} className="text-blue-600 underline">
+                {feed.title}
+              </a>
+            </article>
+          ))
+        ) : (
+          <>
+            <p>Not subscribed to any feeds yet.</p>
+            <Link to="/add-feed">Add feed</Link>
+          </>
+        )}
+      </section>
     </>
   );
 }

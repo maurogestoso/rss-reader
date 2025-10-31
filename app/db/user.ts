@@ -1,16 +1,16 @@
 import { eq } from "drizzle-orm";
 import { db } from ".";
-import { usersTable } from "./schema";
+import { tUsers } from "./schema";
 
 export async function getUser(userId: number) {
   const result = await db
     .select({
-      id: usersTable.id,
-      name: usersTable.name,
-      email: usersTable.email,
+      id: tUsers.id,
+      name: tUsers.name,
+      email: tUsers.email,
     })
-    .from(usersTable)
-    .where(eq(usersTable.id, userId));
+    .from(tUsers)
+    .where(eq(tUsers.id, userId));
 
   if (!result.length) return null;
 

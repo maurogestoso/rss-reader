@@ -1,18 +1,17 @@
 import { randomBytes, scryptSync, timingSafeEqual } from "crypto";
 import { eq } from "drizzle-orm";
-import { usersTable } from "./schema";
+import { tUsers } from "./schema";
 import { db } from ".";
 
-type NewUser = {password:string}&Omit<Omit<typeof usersTable.$inferInsert, "passwordHash">, "passwordSalt">;
+type NewUser = { password: string } & Omit<
+  Omit<typeof tUsers.$inferInsert, "passwordHash">,
+  "passwordSalt"
+>;
 
-export async function createUser({
-  name,
-  email,
-  password,
-}: NewUser) {
+export async function createUser({ name, email, password }: NewUser) {
   const passwordSalt = randomBytes(16);
   const passwordHash = scryptSync(password, passwordSalt, 16);
-  const user: typeof usersTable.$inferInsert = {
+  const user: typeof tUsers.$inferInsert = {
     name,
     email,
     passwordHash: passwordHash.toString("hex"),
@@ -20,9 +19,9 @@ export async function createUser({
   };
 
   const result = await db
-    .insert(usersTable)
+    .insert(tUsers)
     .values(user)
-    .returning({ insertedId: usersTable.id });
+    .returning({ insertedId: tUsers.id });
 
   return result[0];
 }
@@ -34,10 +33,7 @@ export async function validateCredentials({
   email: string;
   password: string;
 }) {
-  const [user] = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.email, email));
+  const [user] = await db.select().from(tUsers).where(eq(tUsers.email, email));
   const salt = Buffer.from(user.passwordSalt, "hex");
   const expectedHash = Buffer.from(user.passwordHash, "hex");
   const hash = scryptSync(password, salt, 16);
