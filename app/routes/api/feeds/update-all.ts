@@ -1,9 +1,7 @@
-import { redirect } from "react-router";
 import type { Route } from "./+types/update-all";
-
-import { ensureUser } from "~/sessions.server";
-import { getAllFeeds, touchFeed } from "~/db/feeds";
 import RssParser from "rss-parser";
+
+import { getAllFeeds, touchFeed } from "~/db/feeds";
 import { insertUnreadItem } from "~/db/items";
 import { validateToken } from "~/db/auth-tokens";
 
@@ -18,14 +16,12 @@ export async function action({ request }: Route.ActionArgs) {
 
   const feeds = await getAllFeeds();
   feeds.forEach(async (feed) => {
-    console.info("updating feed:", feed.title);
-
     const feedData = await rssp.parseURL(feed.url);
     const newItems = feedData.items.filter((item) =>
       feed.updatedAt ? new Date(item.pubDate!) > feed.updatedAt : true,
     );
 
-    console.info("new items:", newItems.length);
+    console.info(`${feed.title} - new items: ${newItems.length}`);
 
     await Promise.all(
       newItems.map((item) =>
