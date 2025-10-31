@@ -8,7 +8,7 @@ import { validateToken } from "~/db/auth-tokens";
 const rssp = new RssParser();
 
 export async function action({ request }: Route.ActionArgs) {
-  console.info("/api/feeds/update-all");
+  console.log("/api/feeds/update-all");
   const authToken = request.headers.get("Authorization")?.split(" ")[1];
   if (!authToken) return new Response(null, { status: 401 });
   const isTokenValid = await validateToken(authToken);
@@ -21,7 +21,7 @@ export async function action({ request }: Route.ActionArgs) {
       feed.updatedAt ? new Date(item.pubDate!) > feed.updatedAt : true,
     );
 
-    console.info(`${feed.title} - new items: ${newItems.length}`);
+    console.log(`${feed.title} - new items: ${newItems.length}`);
 
     await Promise.all(
       newItems.map((item) =>
