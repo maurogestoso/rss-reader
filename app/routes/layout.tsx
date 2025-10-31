@@ -2,7 +2,7 @@ import { Link, Outlet } from "react-router";
 import { getUser } from "~/db/user";
 import { getSession } from "~/sessions.server";
 import type { Route } from "./+types/layout";
-import { Coffee } from "lucide-react";
+import { Coffee, Settings } from "lucide-react";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -27,24 +27,26 @@ export default function AppLayout({ loaderData }: Route.ComponentProps) {
   const { user } = loaderData;
   return (
     <>
-      <div className="max-w-5xl mx-auto h-screen">
-        <header className="p-2 flex justify-between items-center pr-2 border-2 border-black">
+      <header className="bg-amber-100">
+        <div className="flex justify-between items-center px-2 py-4 mx-auto max-w-5xl">
           <h1 className="font-bold text-xl flex items-center gap-1">
             <Coffee className="stroke-orange-600" />
             <Link to="/">Morning Coffee Reader</Link>
           </h1>
           <div>
             {user ? (
-              <Link to="/account">my account</Link>
+              <Link to="/account">
+                <Settings className="stroke-amber-900 hover:stroke-amber-600" />
+              </Link>
             ) : (
               <Link to="/login">login</Link>
             )}
           </div>
-        </header>
-        <main className="p-2 h-full border-2 border-black border-t-0">
-          <Outlet />
-        </main>
-      </div>
+        </div>
+      </header>
+      <main className="mt-4 mx-auto max-w-5xl px-2">
+        <Outlet />
+      </main>
     </>
   );
 }
