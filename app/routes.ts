@@ -11,6 +11,7 @@ export default [
     route("/login", "routes/login.tsx"),
     route("/account", "routes/account.tsx"),
     route("/add-feed", "routes/add-feed.tsx"),
+    route("/starred", "routes/starred.tsx"),
     route("/api/items/read", "routes/api/items/read.ts"),
     route("/api/items/starred", "routes/api/items/starred.ts"),
   ]),

@@ -1,9 +1,9 @@
 import { Link, redirect } from "react-router";
-import type { Route } from "./+types/home";
+import type { Route } from "./+types/starred";
 import { getSession } from "~/sessions.server";
 import { getUser } from "~/db/user";
-import { getAllUnreadItems } from "~/db/items";
-import { ArrowLeft, BookOpenCheck, MailPlus, Star } from "lucide-react";
+import { getAllStarredItems } from "~/db/items";
+import { ArrowLeft, ChevronLeft, Star } from "lucide-react";
 import Button from "~/ui/button";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -17,26 +17,19 @@ export async function loader({ request }: Route.LoaderArgs) {
   const user = await getUser(userId);
   if (!user) return redirect("/login");
 
-  const unreadItems = await getAllUnreadItems();
-  return { items: unreadItems };
+  const starredItems = await getAllStarredItems();
+  return { items: starredItems };
 }
 
-export default function Home({ loaderData }: Route.ComponentProps) {
+export default function Starred({ loaderData }: Route.ComponentProps) {
   const { items } = loaderData;
   return (
     <>
-      <div className="flex gap-2">
-        <Link to={"/add-feed"}>
-          <Button className="bg-orange-600 text-white hover:bg-orange-500">
-            <MailPlus className="size-4" /> Add feed
-          </Button>
-        </Link>
-        <Link to={"/starred"}>
-          <Button className="underline text-stone-600 hover:text-stone-500">
-            <Star className="size-4 stroke-amber-400" /> Starred items
-          </Button>
-        </Link>
-      </div>
+      <Link to={"/"}>
+        <Button className="underline text-stone-600 hover:text-stone-500">
+          <ArrowLeft className="size-4" /> Back to unread items
+        </Button>
+      </Link>
       <section className="flex flex-col gap-2 mt-4">
         {items.length ? (
           items.map((item) => (
@@ -53,32 +46,14 @@ export default function Home({ loaderData }: Route.ComponentProps) {
               >
                 ({item.feed.title})
               </a>
-              <div className="mt-1 flex gap-2">
-                <MarkAsRead itemId={item.id} />
-                <MarkAsStarred itemId={item.id} />
-              </div>
+              <div className="mt-1 flex gap-2"></div>
             </article>
           ))
         ) : (
-          <p className="text-xl">You're all caught up! Go do something else.</p>
+          <p className="text-xl">You don't have any starred items yet.</p>
         )}
       </section>
     </>
-  );
-}
-
-function MarkAsRead({ itemId }: { itemId: number }) {
-  return (
-    <form method="POST" action="/api/items/read">
-      <input type="hidden" value={itemId} name="itemId" />
-      <button
-        type="submit"
-        className="underline text-xs cursor-pointer flex items-center gap-0.5"
-      >
-        <BookOpenCheck className="size-4 stroke-green-600" />{" "}
-        <span>Mark as read</span>
-      </button>
-    </form>
   );
 }
 

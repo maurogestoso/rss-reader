@@ -20,6 +20,23 @@ export async function getAllUnreadItems() {
     .innerJoin(tFeeds, eq(tItems.feedId, tFeeds.id));
 }
 
+export async function getAllStarredItems() {
+  return db
+    .select({
+      id: tItems.id,
+      title: tItems.title,
+      link: tItems.link,
+      publishedAt: tItems.publishedAt,
+      feed: {
+        id: tFeeds.id,
+        title: tFeeds.title,
+        link: tFeeds.link,
+      },
+    })
+    .from(tStarredItems)
+    .innerJoin(tItems, eq(tItems.id, tStarredItems.id))
+    .innerJoin(tFeeds, eq(tItems.feedId, tFeeds.id));
+}
 export async function markItemAsRead(id: number) {
   return db.delete(tUnreadItems).where(eq(tUnreadItems.id, id));
 }
