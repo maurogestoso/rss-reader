@@ -4,6 +4,7 @@ import { getSession } from "~/sessions.server";
 import { getUser } from "~/db/user";
 import { getAllUnreadItems } from "~/db/items";
 import { BookOpenCheck, MailPlus, Star } from "lucide-react";
+import Button from "~/ui/button";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -25,9 +26,9 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <Link to={"/add-feed"}>
-        <button className="p-2 rounded-lg bg-orange-600 text-white text-sm flex gap-1 items-center cursor-pointer hover:bg-orange-500">
+        <Button className="bg-orange-600 text-white hover:bg-orange-500">
           <MailPlus className="size-4" /> Add feed
-        </button>
+        </Button>
       </Link>
       <section className="flex flex-col gap-2 mt-4">
         {items.length ? (

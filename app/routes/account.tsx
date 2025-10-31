@@ -3,6 +3,8 @@ import { getUser } from "~/db/user";
 import { Link, redirect } from "react-router";
 import type { Route } from "./+types/account";
 import { getAllFeeds } from "~/db/feeds";
+import Button from "~/ui/button";
+import { DoorOpen, MailPlus } from "lucide-react";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -30,18 +32,18 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Account({ loaderData }: Route.ComponentProps) {
-  const { user, feeds } = loaderData;
+  const { feeds } = loaderData;
 
   return (
     <>
-      <h2 className="font-bold text-2xl">{user.name}'s Account</h2>
       <form method="POST">
-        <button className="bg-red-600 text-white p-2 rounded-xl">
-          Log out
-        </button>
+        <Button className="bg-red-600 text-white">
+          <DoorOpen className="size-4" /> Log out
+        </Button>
       </form>
-      <section>
-        <h2>Feeds:</h2>
+      <hr className="mt-4 border-stone-500" />
+      <section className="mt-4">
+        <h2 className="font-bold text-xl">Feeds:</h2>
         {feeds.length ? (
           feeds.map((feed) => (
             <article>
@@ -53,7 +55,13 @@ export default function Account({ loaderData }: Route.ComponentProps) {
         ) : (
           <>
             <p>Not subscribed to any feeds yet.</p>
-            <Link to="/add-feed">Add feed</Link>
+            <div className="mt-2">
+              <Link to={"/add-feed"}>
+                <Button className="bg-orange-600 text-white hover:bg-orange-500">
+                  <MailPlus className="size-4" /> Add feed
+                </Button>
+              </Link>
+            </div>
           </>
         )}
       </section>
