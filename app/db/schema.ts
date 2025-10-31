@@ -37,3 +37,9 @@ export const tStarredItems = sqliteTable("starred_items", {
     .primaryKey()
     .references(() => tItems.id),
 });
+
+export const tAuthTokens = sqliteTable("auth_tokens", {
+  id: int().primaryKey({ autoIncrement: true }),
+  tokenHash: text("token_hash").notNull(),
+  tokenSalt: text("token_salt").notNull(),
+});

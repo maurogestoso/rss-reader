@@ -5,11 +5,16 @@ import { ensureUser } from "~/sessions.server";
 import { getAllFeeds, touchFeed } from "~/db/feeds";
 import RssParser from "rss-parser";
 import { insertUnreadItem } from "~/db/items";
+import { validateToken } from "~/db/auth-tokens";
 
 const rssp = new RssParser();
 
 export async function action({ request }: Route.ActionArgs) {
   console.info("/api/feeds/update-all");
+  const authToken = request.headers.get("Authorization")?.split(" ")[1];
+  if (!authToken) return new Response(null, { status: 401 });
+  const isTokenValid = await validateToken(authToken);
+  if (!isTokenValid) return new Response(null, { status: 401 });
 
   const feeds = await getAllFeeds();
   feeds.forEach(async (feed) => {
