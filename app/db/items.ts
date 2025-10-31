@@ -1,30 +1,21 @@
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { db } from ".";
-import { feedsTable, newItemsTable } from "./schema";
+import { tFeeds, tItems, tUnreadItems } from "./schema";
 
-export async function getAllNewItems(userId: number) {
+export async function getAllUnreadItems() {
   return db
     .select({
-      id: newItemsTable.id,
-      title: newItemsTable.title,
-      link: newItemsTable.link,
-      pubDate: newItemsTable.pubDate,
-      feedTitle: feedsTable.title,
-      feedLink: feedsTable.link,
+      id: tItems.id,
+      title: tItems.title,
+      link: tItems.link,
+      publishedAt: tItems.publishedAt,
+      feed: {
+        id: tFeeds.id,
+        title: tFeeds.title,
+        link: tFeeds.link,
+      },
     })
-    .from(newItemsTable)
-    .where(eq(newItemsTable.userId, userId))
-    .innerJoin(feedsTable, eq(newItemsTable.feedId, feedsTable.id));
-}
-
-export async function markItemAsRead({
-  userId,
-  itemId,
-}: {
-  userId: number;
-  itemId: number;
-}) {
-  return db
-    .delete(newItemsTable)
-    .where(and(eq(newItemsTable.id, itemId), eq(newItemsTable.userId, userId)));
+    .from(tUnreadItems)
+    .innerJoin(tItems, eq(tItems.id, tUnreadItems.id))
+    .innerJoin(tFeeds, eq(tItems.feedId, tFeeds.id));
 }

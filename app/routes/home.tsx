@@ -2,7 +2,7 @@ import { Link, redirect } from "react-router";
 import type { Route } from "./+types/home";
 import { getSession } from "~/sessions.server";
 import { getUser } from "~/db/user";
-import { getAllNewItems } from "~/db/items";
+import { getAllUnreadItems } from "~/db/items";
 import { BookOpenCheck, Star } from "lucide-react";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -16,8 +16,8 @@ export async function loader({ request }: Route.LoaderArgs) {
   const user = await getUser(userId);
   if (!user) return redirect("/login");
 
-  const newItems = await getAllNewItems(user.id);
-  return { items: newItems };
+  const unreadItems = await getAllUnreadItems();
+  return { items: unreadItems };
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
@@ -36,10 +36,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
               {item.title}
             </a>
             <a
-              href={item.feedLink}
+              href={item.feed.link}
               className="ml-2 text-gray-400 text-sm hover:underline"
             >
-              ({item.feedTitle})
+              ({item.feed.title})
             </a>
             <div className="mt-1 flex gap-2">
               <MarkAsRead itemId={item.id} />
