@@ -14,5 +14,6 @@ export default [
     route("/starred", "routes/starred.tsx"),
     route("/api/items/read", "routes/api/items/read.ts"),
     route("/api/items/starred", "routes/api/items/starred.ts"),
+    route("/api/feeds/update-all", "routes/api/feeds/update-all.ts"),
   ]),
 ] satisfies RouteConfig;

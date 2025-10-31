@@ -1,4 +1,5 @@
 import { db } from ".";
+import { insertUnreadItem } from "./items";
 import { tFeeds, tItems, tUnreadItems } from "./schema";
 import RssParser from "rss-parser";
 
@@ -25,15 +26,12 @@ export async function insertFeed(url: string) {
   // insert all feed items
   const insItems = await Promise.all(
     feed.items.map((item) =>
-      db
-        .insert(tItems)
-        .values({
-          title: item.title!,
-          link: item.link!,
-          publishedAt: new Date(item.pubDate!),
-          feedId: insFeed.id,
-        })
-        .returning(),
+      insertUnreadItem({
+        title: item.title!,
+        link: item.link!,
+        publishedAt: new Date(item.pubDate!),
+        feedId: insFeed.id,
+      }),
     ),
   );
 
@@ -41,6 +39,10 @@ export async function insertFeed(url: string) {
   await Promise.all(
     insItems
       .slice(0, 3)
-      .map(([item]) => db.insert(tUnreadItems).values({ id: item.id })),
+      .map((item) => db.insert(tUnreadItems).values({ id: item.id })),
   );
+}
+
+export async function touchFeed(date: Date) {
+  return db.update(tFeeds).set({ updatedAt: date });
 }

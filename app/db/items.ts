@@ -1,6 +1,18 @@
 import { eq } from "drizzle-orm";
 import { db } from ".";
 import { tFeeds, tItems, tStarredItems, tUnreadItems } from "./schema";
+import * as entities from "entities";
+
+export async function insertUnreadItem(
+  insertValues: typeof tItems.$inferInsert,
+) {
+  const [insItem] = await db
+    .insert(tItems)
+    .values({ ...insertValues, title: entities.decodeXML(insertValues.title) })
+    .returning();
+  await db.insert(tUnreadItems).values({ id: insItem.id });
+  return insItem;
+}
 
 export async function getAllUnreadItems() {
   return db
@@ -37,6 +49,7 @@ export async function getAllStarredItems() {
     .innerJoin(tItems, eq(tItems.id, tStarredItems.id))
     .innerJoin(tFeeds, eq(tItems.feedId, tFeeds.id));
 }
+
 export async function markItemAsRead(id: number) {
   return db.delete(tUnreadItems).where(eq(tUnreadItems.id, id));
 }
