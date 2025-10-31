@@ -1,4 +1,5 @@
-import { createCookieSessionStorage } from "react-router";
+import { createCookieSessionStorage, type Session } from "react-router";
+import { getUser } from "./db/user";
 
 type SessionData = {
   userId: number;
@@ -30,3 +31,15 @@ const { getSession, commitSession, destroySession } =
   });
 
 export { getSession, commitSession, destroySession };
+
+export async function getUserFromSession(
+  session: Session<SessionData, SessionFlashData>,
+) {
+  const userId = session.get("userId");
+  if (!userId) return null;
+
+  const user = await getUser(userId);
+  if (!user) return null;
+
+  return user;
+}

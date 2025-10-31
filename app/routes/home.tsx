@@ -1,4 +1,4 @@
-import { redirect } from "react-router";
+import { Link, redirect } from "react-router";
 import type { Route } from "./+types/home";
 import { getSession } from "~/sessions.server";
 import { getUser } from "~/db/user";
@@ -25,6 +25,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   const { items } = loaderData;
   return (
     <>
+      <Link to={"/add-feed"}>Add feed</Link>
       <h2 className="font-bold text-2xl">New Items:</h2>
       <ol className="list-decimal list-inside">
         {items.map((item) => (
