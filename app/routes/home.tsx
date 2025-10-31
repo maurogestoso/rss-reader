@@ -43,10 +43,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
             </a>
             <div className="mt-1 flex gap-2">
               <MarkAsRead itemId={item.id} />
-
-              <button className="underline text-xs cursor-pointer flex items-center gap-0.5">
-                <Star className="size-4 stroke-amber-400" /> <span>Star</span>
-              </button>
+              <MarkAsStarred itemId={item.id} />
             </div>
           </article>
         ))}
@@ -65,6 +62,20 @@ function MarkAsRead({ itemId }: { itemId: number }) {
       >
         <BookOpenCheck className="size-4 stroke-green-500" />{" "}
         <span>Mark as read</span>
+      </button>
+    </form>
+  );
+}
+
+function MarkAsStarred({ itemId }: { itemId: number }) {
+  return (
+    <form method="POST" action="/api/items/starred">
+      <input type="hidden" value={itemId} name="itemId" />
+      <button
+        type="submit"
+        className="underline text-xs cursor-pointer flex items-center gap-0.5"
+      >
+        <Star className="size-4 stroke-amber-400" /> <span>Star</span>
       </button>
     </form>
   );

@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from ".";
-import { tFeeds, tItems, tUnreadItems } from "./schema";
+import { tFeeds, tItems, tStarredItems, tUnreadItems } from "./schema";
 
 export async function getAllUnreadItems() {
   return db
@@ -20,6 +20,13 @@ export async function getAllUnreadItems() {
     .innerJoin(tFeeds, eq(tItems.feedId, tFeeds.id));
 }
 
-export async function markItemRead(id: number) {
+export async function markItemAsRead(id: number) {
   return db.delete(tUnreadItems).where(eq(tUnreadItems.id, id));
+}
+
+export async function markItemAsStarred(id: number) {
+  return db.transaction(async (tx) => {
+    await tx.delete(tUnreadItems).where(eq(tUnreadItems.id, id));
+    await tx.insert(tStarredItems).values({ id });
+  });
 }

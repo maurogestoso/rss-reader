@@ -12,5 +12,6 @@ export default [
     route("/account", "routes/account.tsx"),
     route("/add-feed", "routes/add-feed.tsx"),
     route("/api/items/read", "routes/api/items/read.ts"),
+    route("/api/items/starred", "routes/api/items/starred.ts"),
   ]),
 ] satisfies RouteConfig;
