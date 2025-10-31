@@ -1,6 +1,6 @@
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
-export const usersTable = sqliteTable("users_table", {
+export const tUsers = sqliteTable("users", {
   id: int().primaryKey({ autoIncrement: true }),
   name: text().notNull(),
   email: text().notNull().unique(),
@@ -8,26 +8,32 @@ export const usersTable = sqliteTable("users_table", {
   passwordSalt: text("password_salt").notNull(),
 });
 
-export const feedsTable = sqliteTable("feeds", {
+export const tFeeds = sqliteTable("feeds", {
   id: int().primaryKey({ autoIncrement: true }),
   title: text().notNull(),
   link: text().notNull(),
-  feedUrl: text().notNull(),
-  lastUpdate: int({ mode: "timestamp" }),
-  userId: int()
-    .notNull()
-    .references(() => usersTable.id),
+  url: text().notNull(),
+  updatedAt: int({ mode: "timestamp" }),
 });
 
-export const newItemsTable = sqliteTable("new_items", {
+export const tItems = sqliteTable("items", {
   id: int().primaryKey({ autoIncrement: true }),
   title: text().notNull(),
   link: text().notNull(),
-  pubDate: int({ mode: "timestamp" }).notNull(),
+  publishedAt: int({ mode: "timestamp" }).notNull(),
   feedId: int()
     .notNull()
-    .references(() => feedsTable.id),
-  userId: int()
-    .notNull()
-    .references(() => usersTable.id),
+    .references(() => tFeeds.id),
+});
+
+export const tUnreadItems = sqliteTable("unread_items", {
+  id: int()
+    .primaryKey()
+    .references(() => tItems.id),
+});
+
+export const tStarredItems = sqliteTable("starred_items", {
+  id: int()
+    .primaryKey()
+    .references(() => tItems.id),
 });
