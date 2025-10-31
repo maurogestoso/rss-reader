@@ -25,7 +25,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <Link to={"/add-feed"}>
-        <button className="p-2 rounded-lg bg-green-600 text-white text-sm flex gap-1 items-center">
+        <button className="p-2 rounded-lg bg-orange-600 text-white text-sm flex gap-1 items-center cursor-pointer hover:bg-orange-500">
           <MailPlus className="size-4" /> Add feed
         </button>
       </Link>
@@ -67,7 +67,7 @@ function MarkAsRead({ itemId }: { itemId: number }) {
         type="submit"
         className="underline text-xs cursor-pointer flex items-center gap-0.5"
       >
-        <BookOpenCheck className="size-4 stroke-green-500" />{" "}
+        <BookOpenCheck className="size-4 stroke-green-600" />{" "}
         <span>Mark as read</span>
       </button>
     </form>
