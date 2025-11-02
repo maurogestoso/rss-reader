@@ -1,9 +1,9 @@
-import { Link, redirect } from "react-router";
+import { Link, redirect, useFetcher } from "react-router";
 import type { Route } from "./+types/home";
 
 import { ensureUser } from "~/sessions.server";
 import { getAllUnreadItems } from "~/db/items";
-import { BookOpenCheck, MailPlus, Star } from "lucide-react";
+import { List, BookOpenCheck, MailPlus, Star } from "lucide-react";
 import Button from "~/ui/button";
 
 export async function loader({ request }: Route.LoaderArgs) {
@@ -22,6 +22,11 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         <Link to={"/add-feed"}>
           <Button className="bg-orange-600 text-white hover:bg-orange-500">
             <MailPlus className="size-4" /> Add feed
+          </Button>
+        </Link>
+        <Link to={"/feeds"}>
+          <Button className="underline text-stone-600 hover:text-stone-500">
+            <List className="size-4 stroke-blue-600" /> Feeds
           </Button>
         </Link>
         <Link to={"/starred"}>

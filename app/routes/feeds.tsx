@@ -1,0 +1,69 @@
+import { Link, redirect, useFetcher } from "react-router";
+import type { Route } from "./+types/feeds";
+import { ensureUser } from "~/sessions.server";
+import { ArrowLeft, MailPlus, RefreshCw, Star } from "lucide-react";
+import Button from "~/ui/button";
+import { getAllFeeds } from "~/db/feeds";
+
+export async function loader({ request }: Route.LoaderArgs) {
+  const user = await ensureUser(request);
+  if (!user) return redirect("/login");
+
+  const feeds = await getAllFeeds();
+  return { feeds };
+}
+
+export default function Feeds({ loaderData }: Route.ComponentProps) {
+  const { feeds } = loaderData;
+  return (
+    <>
+      <section className="flex gap-2">
+        <Link to={"/"}>
+          <Button className="underline text-stone-600 hover:text-stone-500">
+            <ArrowLeft className="size-4" /> Back to unread items
+          </Button>
+        </Link>
+        <UpdateFeeds />
+      </section>
+      <section className="flex flex-col gap-2">
+        <h2 className="font-bold text-xl">Feeds:</h2>
+        {feeds.length ? (
+          feeds.map((feed) => (
+            <article>
+              <a href={feed.link} className="text-blue-600 underline">
+                {feed.title}
+              </a>
+            </article>
+          ))
+        ) : (
+          <>
+            <p>Not subscribed to any feeds yet.</p>
+            <div className="mt-2">
+              <Link to={"/add-feed"}>
+                <Button className="bg-orange-600 text-white hover:bg-orange-500">
+                  <MailPlus className="size-4" /> Add feed
+                </Button>
+              </Link>
+            </div>
+          </>
+        )}
+      </section>
+    </>
+  );
+}
+
+function UpdateFeeds() {
+  const fetcher = useFetcher();
+  const loading = fetcher.state != "idle";
+  return (
+    <fetcher.Form method="POST" action="/api/feeds/update-all">
+      <Button
+        className="bg-blue-600 text-white hover:bg-blue-500"
+        disabled={loading}
+      >
+        <RefreshCw className={`size-4 ${loading && "animate-spin"}`} /> Update
+        feeds
+      </Button>
+    </fetcher.Form>
+  );
+}
