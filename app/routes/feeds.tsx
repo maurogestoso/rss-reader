@@ -10,20 +10,27 @@ export async function loader({ request }: Route.LoaderArgs) {
   if (!user) return redirect("/login");
 
   const feeds = await getAllFeeds();
-  return { feeds };
+
+  const lastUpdate = feeds[0].updatedAt;
+  const today = new Date();
+  const isUpdateDisabled = lastUpdate
+    ? today.getDate() - lastUpdate.getDate() <= 1
+    : false;
+  return { feeds, isUpdateDisabled };
 }
 
 export default function Feeds({ loaderData }: Route.ComponentProps) {
-  const { feeds } = loaderData;
+  const { feeds, isUpdateDisabled } = loaderData;
   return (
     <>
-      <section className="flex gap-2">
+      <section className="flex gap-2 items-center">
         <Link to={"/"}>
           <Button className="underline text-stone-600 hover:text-stone-500">
             <ArrowLeft className="size-4" /> Back to unread items
           </Button>
         </Link>
-        <UpdateFeeds />
+        <UpdateFeeds disabled={isUpdateDisabled} />
+        {isUpdateDisabled && <span>Already up to date</span>}
       </section>
       <section className="flex flex-col gap-2">
         <h2 className="font-bold text-xl">Feeds:</h2>
@@ -52,14 +59,14 @@ export default function Feeds({ loaderData }: Route.ComponentProps) {
   );
 }
 
-function UpdateFeeds() {
+function UpdateFeeds({ disabled }: { disabled?: boolean }) {
   const fetcher = useFetcher();
   const loading = fetcher.state != "idle";
   return (
     <fetcher.Form method="POST" action="/api/feeds/update-all">
       <Button
         className="bg-blue-600 text-white hover:bg-blue-500"
-        disabled={loading}
+        disabled={loading || disabled}
       >
         <RefreshCw className={`size-4 ${loading && "animate-spin"}`} /> Update
         feeds
