@@ -1,10 +1,14 @@
-import { Link, redirect } from "react-router";
+import { useState } from "react";
+import { Link, redirect, useFetcher } from "react-router";
 import type { Route } from "./+types/starred";
+
 import { getSession } from "~/sessions.server";
 import { getUser } from "~/db/user";
 import { getAllStarredItems } from "~/db/items";
-import { ArrowLeft, ChevronLeft, Star } from "lucide-react";
+import { ArrowLeft, StarOff } from "lucide-react";
 import Button from "~/ui/button";
+import ItemCard from "~/ui/item-card";
+import { ROUTES } from "~/routes";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -22,7 +26,12 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function Starred({ loaderData }: Route.ComponentProps) {
-  const { items } = loaderData;
+  const [items, setItems] = useState(loaderData.items);
+
+  function optimisticallyRemoveItem(itemId: number) {
+    setItems(items.filter((item) => item.id !== itemId));
+  }
+
   return (
     <>
       <Link to={"/"}>
@@ -33,21 +42,14 @@ export default function Starred({ loaderData }: Route.ComponentProps) {
       <section className="flex flex-col gap-2 mt-4">
         {items.length ? (
           items.map((item) => (
-            <article
-              key={item.id}
-              className="p-2 border border-stone-200 rounded-lg"
-            >
-              <a href={item.link} className="text-blue-600 underline">
-                {item.title}
-              </a>
-              <a
-                href={item.feed.link}
-                className="ml-2 text-gray-400 text-sm hover:underline"
-              >
-                ({item.feed.title})
-              </a>
-              <div className="mt-1 flex gap-2"></div>
-            </article>
+            <ItemCard key={item.id} item={item}>
+              <ItemCard.Actions>
+                <MarkAsUnstarred
+                  itemId={item.id}
+                  onClick={() => optimisticallyRemoveItem(item.id)}
+                />
+              </ItemCard.Actions>
+            </ItemCard>
           ))
         ) : (
           <p className="text-xl">You don't have any starred items yet.</p>
@@ -57,16 +59,30 @@ export default function Starred({ loaderData }: Route.ComponentProps) {
   );
 }
 
-function MarkAsStarred({ itemId }: { itemId: number }) {
+function MarkAsUnstarred({
+  itemId,
+  onClick,
+}: {
+  itemId: number;
+  onClick: () => void;
+}) {
+  const fetcher = useFetcher();
   return (
-    <form method="POST" action="/api/items/starred">
+    <fetcher.Form
+      method="POST"
+      action={ROUTES.API.ITEMS.MARK_UNSTARRED}
+      onSubmit={(e) => {
+        onClick();
+        fetcher.submit(e.currentTarget);
+      }}
+    >
       <input type="hidden" value={itemId} name="itemId" />
       <button
         type="submit"
         className="underline text-xs cursor-pointer flex items-center gap-0.5"
       >
-        <Star className="size-4 stroke-amber-400" /> <span>Star</span>
+        <StarOff className="size-4 stroke-amber-400" /> <span>Unstar</span>
       </button>
-    </form>
+    </fetcher.Form>
   );
 }

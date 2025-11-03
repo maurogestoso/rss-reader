@@ -60,3 +60,7 @@ export async function markItemAsStarred(id: number) {
     await tx.insert(tStarredItems).values({ id });
   });
 }
+
+export async function markItemAsUnstarred(id: number) {
+  return db.delete(tStarredItems).where(eq(tStarredItems.id, id));
+}
