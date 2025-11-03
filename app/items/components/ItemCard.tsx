@@ -19,8 +19,8 @@ export default function ItemCard({
       : item.feed.link;
   return (
     <article className="p-2 border border-stone-200 rounded-lg">
-      <div>
-        <a href={item.link} className="text-blue-600 underline">
+      <header>
+        <a href={item.link} className="text-blue-600 text-xl underline">
           {item.title}
         </a>
         <a
@@ -29,13 +29,16 @@ export default function ItemCard({
         >
           ({item.feed.title})
         </a>
-      </div>
+        <p className="text-xs text-stone-500">
+          published on {item.publishedAt.toDateString()}
+        </p>
+      </header>
 
-      {children}
+      <main className="mt-3">{children}</main>
     </article>
   );
 }
 
 ItemCard.Actions = function ({ children }: { children: ReactNode }) {
-  return <div className="mt-1 flex gap-2">{children}</div>;
+  return <div className="flex gap-2">{children}</div>;
 };
