@@ -96,21 +96,23 @@ function MarkAsStarred({
   itemId: number;
   onClick: () => void;
 }) {
-  const submit = useSubmit();
-  const formRef = useRef(null);
+  const fetcher = useFetcher();
   return (
-    <Form ref={formRef} method="POST" action="/api/items/starred">
+    <fetcher.Form
+      method="POST"
+      action="/api/items/starred"
+      onSubmit={(e) => {
+        onClick();
+        fetcher.submit(e.currentTarget);
+      }}
+    >
       <input type="hidden" value={itemId} name="itemId" />
       <button
         type="submit"
         className="underline text-xs cursor-pointer flex items-center gap-0.5"
-        onClick={() => {
-          onClick();
-          submit(formRef.current);
-        }}
       >
         <Star className="size-4 stroke-amber-400" /> <span>Star</span>
       </button>
-    </Form>
+    </fetcher.Form>
   );
 }

@@ -13,5 +13,5 @@ export async function action({ request }: Route.ActionArgs) {
   const id = parseInt(form.get("itemId")?.toString()!);
   await markItemAsStarred(id);
 
-  return redirect("/");
+  return new Response(undefined, { status: 204 });
 }
