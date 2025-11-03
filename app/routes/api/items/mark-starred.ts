@@ -1,5 +1,5 @@
 import { redirect } from "react-router";
-import type { Route } from "./+types/read";
+import type { Route } from "./+types/mark-starred";
 
 import { markItemAsStarred } from "~/db/items";
 import { ensureUser } from "~/sessions.server";
