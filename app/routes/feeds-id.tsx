@@ -42,7 +42,7 @@ export default function FeedsId({ loaderData }: Route.ComponentProps) {
       <h2 className="font-bold text-xl">Feed: {feed.title}</h2>
       <div className="flex flex-col gap-2">
         {items.map((item) => (
-          <ItemCard key={item.id} item={{ ...item, feed }}>
+          <ItemCard key={item.id} item={{ ...item, feed }} feedLink="external">
             <ItemCard.Actions>
               {item.starred ? (
                 <MarkAsUnstarred
