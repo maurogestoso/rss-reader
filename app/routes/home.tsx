@@ -1,4 +1,5 @@
-import { Link, redirect, useFetcher } from "react-router";
+import { useRef, useState } from "react";
+import { Form, Link, redirect, useFetcher, useSubmit } from "react-router";
 import type { Route } from "./+types/home";
 
 import { ensureUser } from "~/sessions.server";
@@ -15,7 +16,12 @@ export async function loader({ request }: Route.LoaderArgs) {
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  const { items } = loaderData;
+  const [items, setItems] = useState(loaderData.items);
+
+  function optimisticallyRemoveItem(itemId: number) {
+    setItems(items.filter((item) => item.id !== itemId));
+  }
+
   return (
     <>
       <div className="flex gap-2">
@@ -53,7 +59,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
               </a>
               <div className="mt-1 flex gap-2">
                 <MarkAsRead itemId={item.id} />
-                <MarkAsStarred itemId={item.id} />
+                <MarkAsStarred
+                  itemId={item.id}
+                  onClick={() => optimisticallyRemoveItem(item.id)}
+                />
               </div>
             </article>
           ))
@@ -80,16 +89,28 @@ function MarkAsRead({ itemId }: { itemId: number }) {
   );
 }
 
-function MarkAsStarred({ itemId }: { itemId: number }) {
+function MarkAsStarred({
+  itemId,
+  onClick,
+}: {
+  itemId: number;
+  onClick: () => void;
+}) {
+  const submit = useSubmit();
+  const formRef = useRef(null);
   return (
-    <form method="POST" action="/api/items/starred">
+    <Form ref={formRef} method="POST" action="/api/items/starred">
       <input type="hidden" value={itemId} name="itemId" />
       <button
         type="submit"
         className="underline text-xs cursor-pointer flex items-center gap-0.5"
+        onClick={() => {
+          onClick();
+          submit(formRef.current);
+        }}
       >
         <Star className="size-4 stroke-amber-400" /> <span>Star</span>
       </button>
-    </form>
+    </Form>
   );
 }
