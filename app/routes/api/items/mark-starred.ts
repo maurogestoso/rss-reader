@@ -1,8 +1,9 @@
 import { redirect } from "react-router";
 import type { Route } from "./+types/read";
 
-import { markItemAsRead } from "~/db/items";
+import { markItemAsStarred } from "~/db/items";
 import { ensureUser } from "~/sessions.server";
+import { ROUTES } from "~/routes";
 
 export async function action({ request }: Route.ActionArgs) {
   const user = await ensureUser(request);
@@ -13,10 +14,10 @@ export async function action({ request }: Route.ActionArgs) {
   if (!idField)
     return new Response("`itemId` form field missing", { status: 400 });
 
-  console.info("/api/items/read", idField);
+  console.info(ROUTES.API.ITEMS.MARK_STARRED, idField);
 
   const id = parseInt(idField);
-  await markItemAsRead(id);
+  await markItemAsStarred(id);
 
   return new Response(undefined, { status: 204 });
 }

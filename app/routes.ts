@@ -32,8 +32,8 @@ export default [
     route(ROUTES.ADD_FEED, "routes/add-feed.tsx"),
     route(ROUTES.FEEDS, "routes/feeds.tsx"),
     route(ROUTES.STARRED, "routes/starred.tsx"),
-    route(ROUTES.API.ITEMS.MARK_READ, "routes/api/items/read.ts"),
-    route(ROUTES.API.ITEMS.MARK_STARRED, "routes/api/items/starred.ts"),
+    route(ROUTES.API.ITEMS.MARK_READ, "routes/api/items/mark-read.ts"),
+    route(ROUTES.API.ITEMS.MARK_STARRED, "routes/api/items/mark-starred.ts"),
     route(
       ROUTES.API.ITEMS.MARK_UNSTARRED,
       "routes/api/items/mark-unstarred.ts",

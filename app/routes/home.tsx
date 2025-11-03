@@ -7,6 +7,7 @@ import { getAllUnreadItems } from "~/db/items";
 import { List, BookOpenCheck, MailPlus, Star } from "lucide-react";
 import Button from "~/ui/button";
 import ItemCard from "~/ui/item-card";
+import { ROUTES } from "~/routes";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await ensureUser(request);
@@ -77,7 +78,7 @@ function MarkAsRead({
   return (
     <fetcher.Form
       method="POST"
-      action="/api/items/read"
+      action={ROUTES.API.ITEMS.MARK_READ}
       onSubmit={(e) => {
         onClick();
         fetcher.submit(e.currentTarget);
@@ -106,7 +107,7 @@ function MarkAsStarred({
   return (
     <fetcher.Form
       method="POST"
-      action="/api/items/starred"
+      action={ROUTES.API.ITEMS.MARK_STARRED}
       onSubmit={(e) => {
         onClick();
         fetcher.submit(e.currentTarget);
