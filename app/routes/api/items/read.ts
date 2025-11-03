@@ -9,9 +9,14 @@ export async function action({ request }: Route.ActionArgs) {
   if (!user) return redirect("/login");
 
   const form = await request.formData();
-  console.info("/api/items/read", form.get("itemId"));
-  const id = parseInt(form.get("itemId")?.toString()!);
+  const idField = form.get("itemId")?.toString();
+  if (!idField)
+    return new Response("`itemId` form field missing", { status: 400 });
+
+  console.info("/api/items/read", idField);
+
+  const id = parseInt(idField);
   await markItemAsRead(id);
 
-  return redirect("/");
+  return new Response(undefined, { status: 204 });
 }

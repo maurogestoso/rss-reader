@@ -58,7 +58,10 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                 ({item.feed.title})
               </a>
               <div className="mt-1 flex gap-2">
-                <MarkAsRead itemId={item.id} />
+                <MarkAsRead
+                  itemId={item.id}
+                  onClick={() => optimisticallyRemoveItem(item.id)}
+                />
                 <MarkAsStarred
                   itemId={item.id}
                   onClick={() => optimisticallyRemoveItem(item.id)}
@@ -74,9 +77,23 @@ export default function Home({ loaderData }: Route.ComponentProps) {
   );
 }
 
-function MarkAsRead({ itemId }: { itemId: number }) {
+function MarkAsRead({
+  itemId,
+  onClick,
+}: {
+  itemId: number;
+  onClick: () => void;
+}) {
+  const fetcher = useFetcher();
   return (
-    <form method="POST" action="/api/items/read">
+    <fetcher.Form
+      method="POST"
+      action="/api/items/read"
+      onSubmit={(e) => {
+        onClick();
+        fetcher.submit(e.currentTarget);
+      }}
+    >
       <input type="hidden" value={itemId} name="itemId" />
       <button
         type="submit"
@@ -85,7 +102,7 @@ function MarkAsRead({ itemId }: { itemId: number }) {
         <BookOpenCheck className="size-4 stroke-green-600" />{" "}
         <span>Mark as read</span>
       </button>
-    </form>
+    </fetcher.Form>
   );
 }
 
