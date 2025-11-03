@@ -1,13 +1,14 @@
-import { useRef, useState } from "react";
-import { Form, Link, redirect, useFetcher, useSubmit } from "react-router";
+import { useState } from "react";
+import { Link, redirect } from "react-router";
 import type { Route } from "./+types/home";
 
 import { ensureUser } from "~/sessions.server";
 import { getAllUnreadItems } from "~/db/items";
-import { List, BookOpenCheck, MailPlus, Star } from "lucide-react";
+import { List, MailPlus, Star } from "lucide-react";
 import Button from "~/ui/button";
-import ItemCard from "~/ui/item-card";
-import { ROUTES } from "~/routes";
+import ItemCard from "~/items/components/ItemCard";
+import MarkAsStarred from "~/items/components/MarkAsStarred";
+import MarkAsRead from "~/items/components/MarkAsRead";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await ensureUser(request);
@@ -64,62 +65,5 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         )}
       </section>
     </>
-  );
-}
-
-function MarkAsRead({
-  itemId,
-  onClick,
-}: {
-  itemId: number;
-  onClick: () => void;
-}) {
-  const fetcher = useFetcher();
-  return (
-    <fetcher.Form
-      method="POST"
-      action={ROUTES.API.ITEMS.MARK_READ}
-      onSubmit={(e) => {
-        onClick();
-        fetcher.submit(e.currentTarget);
-      }}
-    >
-      <input type="hidden" value={itemId} name="itemId" />
-      <button
-        type="submit"
-        className="underline text-xs cursor-pointer flex items-center gap-0.5"
-      >
-        <BookOpenCheck className="size-4 stroke-green-600" />{" "}
-        <span>Mark as read</span>
-      </button>
-    </fetcher.Form>
-  );
-}
-
-function MarkAsStarred({
-  itemId,
-  onClick,
-}: {
-  itemId: number;
-  onClick: () => void;
-}) {
-  const fetcher = useFetcher();
-  return (
-    <fetcher.Form
-      method="POST"
-      action={ROUTES.API.ITEMS.MARK_STARRED}
-      onSubmit={(e) => {
-        onClick();
-        fetcher.submit(e.currentTarget);
-      }}
-    >
-      <input type="hidden" value={itemId} name="itemId" />
-      <button
-        type="submit"
-        className="underline text-xs cursor-pointer flex items-center gap-0.5"
-      >
-        <Star className="size-4 stroke-amber-400" /> <span>Star</span>
-      </button>
-    </fetcher.Form>
   );
 }

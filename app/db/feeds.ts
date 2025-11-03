@@ -1,9 +1,12 @@
+import { eq } from "drizzle-orm";
 import { db } from ".";
 import { insertUnreadItem } from "./items";
-import { tFeeds, tItems, tUnreadItems } from "./schema";
+import { tFeeds, tItems, tStarredItems } from "./schema";
 import RssParser from "rss-parser";
 
 const rssp = new RssParser();
+
+export type Feed = typeof tFeeds.$inferSelect;
 
 export async function getAllFeeds() {
   return db.select().from(tFeeds);
@@ -23,7 +26,7 @@ export async function insertFeed(url: string) {
     })
     .returning();
 
-  const insItems = await Promise.all(
+  return await Promise.all(
     feed.items.map((item) =>
       insertUnreadItem({
         title: item.title!,
@@ -37,4 +40,25 @@ export async function insertFeed(url: string) {
 
 export async function touchFeed(date: Date) {
   return db.update(tFeeds).set({ updatedAt: date });
+}
+
+export type FeedWithItems = typeof tFeeds.$inferSelect & {
+  items: (typeof tItems.$inferSelect & { starred: boolean })[];
+};
+
+export async function getFeedWithItems(id: number): Promise<FeedWithItems> {
+  const result = await db
+    .select({ feed: tFeeds, item: tItems, starred: tStarredItems })
+    .from(tFeeds)
+    .where(eq(tFeeds.id, id))
+    .innerJoin(tItems, eq(tItems.feedId, tFeeds.id))
+    .leftJoin(tStarredItems, eq(tItems.id, tStarredItems.id))
+    .all();
+
+  return {
+    ...result[0].feed,
+    items: result.map((row) => {
+      return { ...row.item, starred: row.starred != null };
+    }),
+  };
 }

@@ -4,6 +4,7 @@ import { ensureUser } from "~/sessions.server";
 import { ArrowLeft, MailPlus, RefreshCw, Star } from "lucide-react";
 import Button from "~/ui/button";
 import { getAllFeeds } from "~/db/feeds";
+import FeedCard from "~/ui/feed-card";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await ensureUser(request);
@@ -35,13 +36,7 @@ export default function Feeds({ loaderData }: Route.ComponentProps) {
       <section className="flex flex-col gap-2">
         <h2 className="font-bold text-xl">Feeds:</h2>
         {feeds.length ? (
-          feeds.map((feed) => (
-            <article>
-              <a href={feed.link} className="text-blue-600 underline">
-                {feed.title}
-              </a>
-            </article>
-          ))
+          feeds.map((feed) => <FeedCard key={feed.id} feed={feed} />)
         ) : (
           <>
             <p>Not subscribed to any feeds yet.</p>

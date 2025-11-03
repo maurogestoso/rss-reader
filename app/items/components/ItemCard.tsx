@@ -8,7 +8,7 @@ type Props = {
 
 export default function ItemCard({ item, children }: Props) {
   return (
-    <article key={item.id} className="p-2 border border-stone-200 rounded-lg">
+    <article className="p-2 border border-stone-200 rounded-lg">
       <div>
         <a href={item.link} className="text-blue-600 underline">
           {item.title}

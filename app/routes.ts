@@ -11,6 +11,7 @@ export const ROUTES = {
   ACCOUNT: "/account",
   ADD_FEED: "/add-feed",
   FEEDS: "/feeds",
+  FEEDS_ID: "/feeds/:id",
   STARRED: "/starred",
   API: {
     ITEMS: {
@@ -31,6 +32,7 @@ export default [
     route(ROUTES.ACCOUNT, "routes/account.tsx"),
     route(ROUTES.ADD_FEED, "routes/add-feed.tsx"),
     route(ROUTES.FEEDS, "routes/feeds.tsx"),
+    route(ROUTES.FEEDS_ID, "routes/feeds-id.tsx"),
     route(ROUTES.STARRED, "routes/starred.tsx"),
     route(ROUTES.API.ITEMS.MARK_READ, "routes/api/items/mark-read.ts"),
     route(ROUTES.API.ITEMS.MARK_STARRED, "routes/api/items/mark-starred.ts"),
