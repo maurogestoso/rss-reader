@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { db } from ".";
 import { insertUnreadItem } from "./items";
 import { tFeeds, tItems, tStarredItems } from "./schema";
@@ -15,7 +15,6 @@ export async function getAllFeeds() {
 export async function insertFeed(url: string) {
   const feed = await rssp.parseURL(url);
 
-  // insert feed with updatedAt to now
   const [insFeed] = await db
     .insert(tFeeds)
     .values({
@@ -53,6 +52,7 @@ export async function getFeedWithItems(id: number): Promise<FeedWithItems> {
     .where(eq(tFeeds.id, id))
     .innerJoin(tItems, eq(tItems.feedId, tFeeds.id))
     .leftJoin(tStarredItems, eq(tItems.id, tStarredItems.id))
+    .orderBy(desc(tItems.publishedAt))
     .all();
 
   return {

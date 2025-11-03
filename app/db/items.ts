@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { db } from ".";
 import { tFeeds, tItems, tStarredItems, tUnreadItems } from "./schema";
 import * as entities from "entities";
@@ -39,7 +39,8 @@ export async function getAllUnreadItems(): Promise<ItemWithFeed[]> {
     .select(selectItemWithFeed)
     .from(tUnreadItems)
     .innerJoin(tItems, eq(tItems.id, tUnreadItems.id))
-    .innerJoin(tFeeds, eq(tItems.feedId, tFeeds.id));
+    .innerJoin(tFeeds, eq(tItems.feedId, tFeeds.id))
+    .orderBy(desc(tItems.publishedAt));
 }
 
 export async function getAllStarredItems(): Promise<ItemWithFeed[]> {
@@ -47,7 +48,8 @@ export async function getAllStarredItems(): Promise<ItemWithFeed[]> {
     .select(selectItemWithFeed)
     .from(tStarredItems)
     .innerJoin(tItems, eq(tItems.id, tStarredItems.id))
-    .innerJoin(tFeeds, eq(tItems.feedId, tFeeds.id));
+    .innerJoin(tFeeds, eq(tItems.feedId, tFeeds.id))
+    .orderBy(desc(tItems.publishedAt));
 }
 
 export async function markItemAsRead(id: number) {
