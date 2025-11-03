@@ -3,9 +3,17 @@ import { db } from ".";
 import { tFeeds, tItems, tStarredItems, tUnreadItems } from "./schema";
 import * as entities from "entities";
 
-export async function insertUnreadItem(
-  insertValues: typeof tItems.$inferInsert,
-) {
+export type ItemWithFeed = Omit<typeof tItems.$inferSelect, "feedId"> & {
+  feed: {
+    id: number;
+    title: string;
+    link: string;
+  };
+};
+
+export type ItemInsert = typeof tItems.$inferInsert;
+
+export async function insertUnreadItem(insertValues: ItemInsert) {
   const [insItem] = await db
     .insert(tItems)
     .values({ ...insertValues, title: entities.decodeXML(insertValues.title) })
@@ -14,37 +22,29 @@ export async function insertUnreadItem(
   return insItem;
 }
 
-export async function getAllUnreadItems() {
+const selectItemWithFeed = {
+  id: tItems.id,
+  title: tItems.title,
+  link: tItems.link,
+  publishedAt: tItems.publishedAt,
+  feed: {
+    id: tFeeds.id,
+    title: tFeeds.title,
+    link: tFeeds.link,
+  },
+};
+
+export async function getAllUnreadItems(): Promise<ItemWithFeed[]> {
   return db
-    .select({
-      id: tItems.id,
-      title: tItems.title,
-      link: tItems.link,
-      publishedAt: tItems.publishedAt,
-      feed: {
-        id: tFeeds.id,
-        title: tFeeds.title,
-        link: tFeeds.link,
-      },
-    })
+    .select(selectItemWithFeed)
     .from(tUnreadItems)
     .innerJoin(tItems, eq(tItems.id, tUnreadItems.id))
     .innerJoin(tFeeds, eq(tItems.feedId, tFeeds.id));
 }
 
-export async function getAllStarredItems() {
+export async function getAllStarredItems(): Promise<ItemWithFeed[]> {
   return db
-    .select({
-      id: tItems.id,
-      title: tItems.title,
-      link: tItems.link,
-      publishedAt: tItems.publishedAt,
-      feed: {
-        id: tFeeds.id,
-        title: tFeeds.title,
-        link: tFeeds.link,
-      },
-    })
+    .select(selectItemWithFeed)
     .from(tStarredItems)
     .innerJoin(tItems, eq(tItems.id, tStarredItems.id))
     .innerJoin(tFeeds, eq(tItems.feedId, tFeeds.id));

@@ -6,6 +6,7 @@ import { ensureUser } from "~/sessions.server";
 import { getAllUnreadItems } from "~/db/items";
 import { List, BookOpenCheck, MailPlus, Star } from "lucide-react";
 import Button from "~/ui/button";
+import ItemCard from "~/ui/item-card";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await ensureUser(request);
@@ -44,20 +45,8 @@ export default function Home({ loaderData }: Route.ComponentProps) {
       <section className="flex flex-col gap-2 mt-4">
         {items.length ? (
           items.map((item) => (
-            <article
-              key={item.id}
-              className="p-2 border border-stone-200 rounded-lg"
-            >
-              <a href={item.link} className="text-blue-600 underline">
-                {item.title}
-              </a>
-              <a
-                href={item.feed.link}
-                className="ml-2 text-gray-400 text-sm hover:underline"
-              >
-                ({item.feed.title})
-              </a>
-              <div className="mt-1 flex gap-2">
+            <ItemCard key={item.id} item={item}>
+              <ItemCard.Actions>
                 <MarkAsRead
                   itemId={item.id}
                   onClick={() => optimisticallyRemoveItem(item.id)}
@@ -66,8 +55,8 @@ export default function Home({ loaderData }: Route.ComponentProps) {
                   itemId={item.id}
                   onClick={() => optimisticallyRemoveItem(item.id)}
                 />
-              </div>
-            </article>
+              </ItemCard.Actions>
+            </ItemCard>
           ))
         ) : (
           <p className="text-xl">You're all caught up! Go do something else.</p>
