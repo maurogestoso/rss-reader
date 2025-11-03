@@ -23,7 +23,6 @@ export async function insertFeed(url: string) {
     })
     .returning();
 
-  // insert all feed items
   const insItems = await Promise.all(
     feed.items.map((item) =>
       insertUnreadItem({
@@ -33,13 +32,6 @@ export async function insertFeed(url: string) {
         feedId: insFeed.id,
       }),
     ),
-  );
-
-  // last 3 items are unread
-  await Promise.all(
-    insItems
-      .slice(0, 3)
-      .map((item) => db.insert(tUnreadItems).values({ id: item.id })),
   );
 }
 
