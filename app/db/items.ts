@@ -3,7 +3,7 @@ import { db } from ".";
 import { tFeeds, tItems, tStarredItems, tUnreadItems } from "./schema";
 import * as entities from "entities";
 
-export type ItemWithFeed = Omit<typeof tItems.$inferSelect, "feedId"> & {
+export type ItemWithFeed = typeof tItems.$inferSelect & {
   feed: {
     id: number;
     title: string;
@@ -27,6 +27,7 @@ const selectItemWithFeed = {
   title: tItems.title,
   link: tItems.link,
   publishedAt: tItems.publishedAt,
+  feedId: tItems.feedId,
   feed: {
     id: tFeeds.id,
     title: tFeeds.title,
