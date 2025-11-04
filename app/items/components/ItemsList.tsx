@@ -1,10 +1,13 @@
+import { useState } from "react";
+
 import type { Item } from "~/db/items";
 import ItemCard from "./ItemCard";
-import { useState } from "react";
 
 type ItemActionsArgs = {
   id: number;
+  item: Item;
   optimisticallyRemoveItem: (id: number) => void;
+  optimisticallyToggleStar: (id: number) => void;
 };
 
 type Props = {
@@ -21,6 +24,16 @@ export default function ItemsList({
   function optimisticallyRemoveItem(itemId: number) {
     setItems(items.filter((item) => item.id !== itemId));
   }
+  function optimisticallyToggleStar(itemId: number) {
+    setItems(
+      items.map((item) => {
+        if (item.id === itemId) {
+          return { ...item, starred: !item.starred };
+        }
+        return item;
+      }),
+    );
+  }
 
   return items.map((item) => (
     <ItemCard
@@ -32,7 +45,9 @@ export default function ItemsList({
       <ItemCard.Actions>
         {itemActions({
           id: item.id,
+          item,
           optimisticallyRemoveItem,
+          optimisticallyToggleStar,
         })}
       </ItemCard.Actions>
     </ItemCard>

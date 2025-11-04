@@ -1,17 +1,16 @@
-import { useState } from "react";
 import type { Route } from "./+types/feeds-id";
 import { Form, redirect, useSubmit } from "react-router";
 
 import { ensureUser } from "~/sessions.server";
 import { ROUTES } from "~/routes";
-import { getFeed, removeFeed } from "~/db/feeds";
-import ItemCard from "~/items/components/ItemCard";
+import { getFeed, removeFeed, type Feed } from "~/db/feeds";
 import MarkAsStarred from "~/items/components/MarkAsStarred";
 import MarkAsUnstarred from "~/items/components/MarkAsUnstarred";
 import Button from "~/ui/button";
 import { MailX } from "lucide-react";
 import Navbar from "~/ui/navbar";
 import { getFeedItems } from "~/db/items";
+import ItemsList from "~/items/components/ItemsList";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await ensureUser(request);
@@ -37,20 +36,39 @@ export async function action({ request, params }: Route.ActionArgs) {
 }
 
 export default function FeedsId({ loaderData }: Route.ComponentProps) {
-  const { feed, items: feedItems } = loaderData;
-  const [items, setItems] = useState(feedItems);
-  const submit = useSubmit();
+  const { feed } = loaderData;
 
-  function optimisticallyToggleStar(itemId: number) {
-    setItems(
-      items.map((item) => {
-        if (item.id === itemId) {
-          return { ...item, starred: !item.starred };
-        }
-        return item;
-      }),
-    );
-  }
+  return (
+    <>
+      <Navbar />
+      <div className="mt-4 flex justify-between items-center">
+        <h2 className="font-bold text-2xl">{feed.title}</h2>
+        <UnsubscribeAction feed={feed} />
+      </div>
+      <section className="flex flex-col gap-2 mt-4">
+        <ItemsList
+          items={loaderData.items}
+          renderItemActions={({ optimisticallyToggleStar, item }) =>
+            item.starred ? (
+              <MarkAsUnstarred
+                itemId={item.id}
+                onClick={() => optimisticallyToggleStar(item.id)}
+              />
+            ) : (
+              <MarkAsStarred
+                itemId={item.id}
+                onClick={() => optimisticallyToggleStar(item.id)}
+              />
+            )
+          }
+        />
+      </section>
+    </>
+  );
+}
+
+function UnsubscribeAction({ feed }: { feed: Feed }) {
+  const submit = useSubmit();
 
   function handleUnsuscribe(e: React.FormEvent<HTMLFormElement>) {
     const ok = confirm(`Unsubscribe from ${feed.title}?`);
@@ -63,38 +81,10 @@ export default function FeedsId({ loaderData }: Route.ComponentProps) {
   }
 
   return (
-    <>
-      <Navbar />
-      <div className="mt-4 flex justify-between items-center">
-        <h2 className="font-bold text-2xl">{feed.title}</h2>
-        <Form method="DELETE" onSubmit={handleUnsuscribe}>
-          <Button
-            type="submit"
-            className="bg-red-600 hover:bg-red-500 text-white"
-          >
-            <MailX className="size-4" /> Unsubscribe
-          </Button>
-        </Form>
-      </div>
-      <section className="flex flex-col gap-2 mt-4">
-        {items.map((item) => (
-          <ItemCard key={item.id} item={{ ...item, feed }} feedLink="external">
-            <ItemCard.Actions>
-              {item.starred ? (
-                <MarkAsUnstarred
-                  itemId={item.id}
-                  onClick={() => optimisticallyToggleStar(item.id)}
-                />
-              ) : (
-                <MarkAsStarred
-                  itemId={item.id}
-                  onClick={() => optimisticallyToggleStar(item.id)}
-                />
-              )}
-            </ItemCard.Actions>
-          </ItemCard>
-        ))}
-      </section>
-    </>
+    <Form method="DELETE" onSubmit={handleUnsuscribe}>
+      <Button type="submit" className="bg-red-600 hover:bg-red-500 text-white">
+        <MailX className="size-4" /> Unsubscribe
+      </Button>
+    </Form>
   );
 }
