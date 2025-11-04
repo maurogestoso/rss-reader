@@ -10,6 +10,7 @@ import MarkAsStarred from "~/items/components/MarkAsStarred";
 import MarkAsUnstarred from "~/items/components/MarkAsUnstarred";
 import Button from "~/ui/button";
 import { MailX } from "lucide-react";
+import Navbar from "~/ui/navbar";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await ensureUser(request);
@@ -45,22 +46,22 @@ export default function FeedsId({ loaderData }: Route.ComponentProps) {
     );
   }
 
+  function handleUnsuscribe(e: React.FormEvent<HTMLFormElement>) {
+    const ok = confirm(`Unsubscribe from ${feed.title}?`);
+    if (ok) {
+      submit(e.currentTarget, {
+        action: ROUTES.FEEDS_ID,
+        method: "DELETE",
+      });
+    }
+  }
+
   return (
     <>
-      <h2 className="font-bold text-xl">Feed: {feed.title}</h2>
-      <div className="flex">
-        <Form
-          method="DELETE"
-          onSubmit={(e) => {
-            const ok = confirm(`Unsubscribe from ${feed.title}?`);
-            if (ok) {
-              submit(e.currentTarget, {
-                action: ROUTES.FEEDS_ID,
-                method: "DELETE",
-              });
-            }
-          }}
-        >
+      <Navbar />
+      <div className="mt-4 flex justify-between items-center">
+        <h2 className="font-bold text-2xl">{feed.title}</h2>
+        <Form method="DELETE" onSubmit={handleUnsuscribe}>
           <Button
             type="submit"
             className="bg-red-600 hover:bg-red-500 text-white"

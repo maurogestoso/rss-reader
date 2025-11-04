@@ -9,6 +9,7 @@ import { ArrowLeft } from "lucide-react";
 import Button from "~/ui/button";
 import ItemCard from "~/items/components/ItemCard";
 import MarkAsUnstarred from "~/items/components/MarkAsUnstarred";
+import Navbar from "~/ui/navbar";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const session = await getSession(request.headers.get("Cookie"));
@@ -34,11 +35,7 @@ export default function Starred({ loaderData }: Route.ComponentProps) {
 
   return (
     <>
-      <Link to={"/"}>
-        <Button className="underline text-stone-600 hover:text-stone-500">
-          <ArrowLeft className="size-4" /> Back to unread items
-        </Button>
-      </Link>
+      <Navbar />
       <section className="flex flex-col gap-2 mt-4">
         {items.length ? (
           items.map((item) => (

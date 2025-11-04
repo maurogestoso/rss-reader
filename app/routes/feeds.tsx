@@ -5,6 +5,7 @@ import { ArrowLeft, MailPlus, RefreshCw, Star } from "lucide-react";
 import Button from "~/ui/button";
 import { getAllFeeds } from "~/db/feeds";
 import FeedCard from "~/ui/feed-card";
+import Navbar from "~/ui/navbar";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await ensureUser(request);
@@ -24,17 +25,14 @@ export default function Feeds({ loaderData }: Route.ComponentProps) {
   const { feeds, isUpdateDisabled } = loaderData;
   return (
     <>
-      <section className="flex gap-2 items-center">
-        <Link to={"/"}>
-          <Button className="underline text-stone-600 hover:text-stone-500">
-            <ArrowLeft className="size-4" /> Back to unread items
-          </Button>
-        </Link>
-        <UpdateFeeds disabled={isUpdateDisabled} />
-        {isUpdateDisabled && <span>Already up to date</span>}
+      <section className="flex justify-between items-center">
+        <Navbar />
+        <div className="flex gap-2 items-center mt-4">
+          <UpdateFeeds disabled={isUpdateDisabled} />
+          {isUpdateDisabled && <span>Already up to date</span>}
+        </div>
       </section>
-      <section className="flex flex-col gap-2">
-        <h2 className="font-bold text-xl">Feeds:</h2>
+      <section className="flex flex-col gap-2 mt-4">
         {feeds.length ? (
           feeds.map((feed) => <FeedCard key={feed.id} feed={feed} />)
         ) : (

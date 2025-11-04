@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, redirect } from "react-router";
+import { Link, NavLink, redirect } from "react-router";
 import type { Route } from "./+types/home";
 
 import { ensureUser } from "~/sessions.server";
@@ -9,6 +9,8 @@ import Button from "~/ui/button";
 import ItemCard from "~/items/components/ItemCard";
 import MarkAsStarred from "~/items/components/MarkAsStarred";
 import MarkAsRead from "~/items/components/MarkAsRead";
+import { ROUTES } from "~/routes";
+import Navbar from "~/ui/navbar";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await ensureUser(request);
@@ -27,23 +29,7 @@ export default function Home({ loaderData }: Route.ComponentProps) {
 
   return (
     <>
-      <div className="flex gap-2">
-        <Link to={"/add-feed"}>
-          <Button className="bg-orange-600 text-white hover:bg-orange-500">
-            <MailPlus className="size-4" /> Add feed
-          </Button>
-        </Link>
-        <Link to={"/feeds"}>
-          <Button className="underline text-stone-600 hover:text-stone-500">
-            <List className="size-4 stroke-blue-600" /> Feeds
-          </Button>
-        </Link>
-        <Link to={"/starred"}>
-          <Button className="underline text-stone-600 hover:text-stone-500">
-            <Star className="size-4 stroke-amber-400" /> Starred items
-          </Button>
-        </Link>
-      </div>
+      <Navbar />
       <section className="flex flex-col gap-2 mt-4">
         {items.length ? (
           items.map((item) => (
