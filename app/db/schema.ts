@@ -23,17 +23,17 @@ export const tItems = sqliteTable("items", {
   publishedAt: int({ mode: "timestamp" }).notNull(),
   feedId: int()
     .notNull()
-    .references(() => tFeeds.id),
+    .references(() => tFeeds.id, { onDelete: "cascade" }),
 });
 
 export const tUnreadItems = sqliteTable("unread_items", {
   id: int()
     .primaryKey()
-    .references(() => tItems.id),
+    .references(() => tItems.id, { onDelete: "cascade" }),
 });
 
 export const tStarredItems = sqliteTable("starred_items", {
   id: int()
     .primaryKey()
-    .references(() => tItems.id),
+    .references(() => tItems.id, { onDelete: "cascade" }),
 });

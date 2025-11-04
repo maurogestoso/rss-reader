@@ -1,7 +1,7 @@
 import { eq, desc } from "drizzle-orm";
 import { db } from ".";
 import { insertUnreadItem } from "./items";
-import { tFeeds, tItems, tStarredItems } from "./schema";
+import { tFeeds, tItems, tStarredItems, tUnreadItems } from "./schema";
 import RssParser from "rss-parser";
 
 const rssp = new RssParser();
@@ -61,4 +61,8 @@ export async function getFeedWithItems(id: number): Promise<FeedWithItems> {
       return { ...row.item, starred: row.starred != null };
     }),
   };
+}
+
+export async function removeFeed(id: number) {
+  return db.delete(tFeeds).where(eq(tFeeds.id, id));
 }

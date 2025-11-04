@@ -1,13 +1,15 @@
 import { useState } from "react";
 import type { Route } from "./+types/feeds-id";
-import { redirect } from "react-router";
+import { Form, redirect, useSubmit } from "react-router";
 
 import { ensureUser } from "~/sessions.server";
 import { ROUTES } from "~/routes";
-import { getFeedWithItems } from "~/db/feeds";
+import { getFeedWithItems, removeFeed } from "~/db/feeds";
 import ItemCard from "~/items/components/ItemCard";
 import MarkAsStarred from "~/items/components/MarkAsStarred";
 import MarkAsUnstarred from "~/items/components/MarkAsUnstarred";
+import Button from "~/ui/button";
+import { MailX } from "lucide-react";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await ensureUser(request);
@@ -16,15 +18,21 @@ export async function loader({ request, params }: Route.LoaderArgs) {
   const { id } = params;
 
   const feed = await getFeedWithItems(parseInt(id));
+  return { feed };
+}
 
-  return {
-    feed,
-  };
+export async function action({ request, params }: Route.ActionArgs) {
+  if (request.method === "DELETE") {
+    const id = parseInt(params.id);
+    await removeFeed(id);
+    return redirect("/");
+  }
 }
 
 export default function FeedsId({ loaderData }: Route.ComponentProps) {
   const { feed } = loaderData;
   const [items, setItems] = useState(feed.items);
+  const submit = useSubmit();
 
   function optimisticallyToggleStar(itemId: number) {
     setItems(
@@ -40,7 +48,28 @@ export default function FeedsId({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <h2 className="font-bold text-xl">Feed: {feed.title}</h2>
-      <div className="flex flex-col gap-2">
+      <div className="flex">
+        <Form
+          method="DELETE"
+          onSubmit={(e) => {
+            const ok = confirm(`Unsubscribe from ${feed.title}?`);
+            if (ok) {
+              submit(e.currentTarget, {
+                action: ROUTES.FEEDS_ID,
+                method: "DELETE",
+              });
+            }
+          }}
+        >
+          <Button
+            type="submit"
+            className="bg-red-600 hover:bg-red-500 text-white"
+          >
+            <MailX className="size-4" /> Unsubscribe
+          </Button>
+        </Form>
+      </div>
+      <section className="flex flex-col gap-2 mt-4">
         {items.map((item) => (
           <ItemCard key={item.id} item={{ ...item, feed }} feedLink="external">
             <ItemCard.Actions>
@@ -58,7 +87,7 @@ export default function FeedsId({ loaderData }: Route.ComponentProps) {
             </ItemCard.Actions>
           </ItemCard>
         ))}
-      </div>
+      </section>
     </>
   );
 }
