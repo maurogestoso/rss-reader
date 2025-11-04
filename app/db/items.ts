@@ -3,14 +3,13 @@ import { db } from ".";
 import { tFeeds, tItems, tStarredItems, tUnreadItems } from "./schema";
 import * as entities from "entities";
 
-export type ItemWithFeed = typeof tItems.$inferSelect & {
+export type Item = typeof tItems.$inferSelect & {
   feed: {
     id: number;
     title: string;
     link: string;
   };
-};
-
+} & { starred: boolean };
 export type ItemInsert = typeof tItems.$inferInsert;
 
 export async function insertUnreadItem(insertValues: ItemInsert) {
@@ -42,7 +41,7 @@ export async function getAllUnreadItems() {
   }));
 }
 
-export async function getAllStarredItems(): Promise<ItemWithFeed[]> {
+export async function getAllStarredItems() {
   const result = await db
     .select({ item: tItems, feed: tFeeds })
     .from(tStarredItems)

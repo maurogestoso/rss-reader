@@ -1,4 +1,4 @@
-import type { ItemWithFeed } from "~/db/items";
+import type { Item } from "~/db/items";
 import ItemCard from "./ItemCard";
 import { useState } from "react";
 
@@ -8,7 +8,7 @@ type ItemActionsArgs = {
 };
 
 type Props = {
-  items: ItemWithFeed[];
+  items: Item[];
   renderItemActions: (args: ItemActionsArgs) => React.ReactNode;
 };
 export default function ItemsList({
