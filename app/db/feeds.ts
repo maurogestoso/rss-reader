@@ -41,26 +41,11 @@ export async function touchFeed(date: Date) {
   return db.update(tFeeds).set({ updatedAt: date });
 }
 
-export type FeedWithItems = typeof tFeeds.$inferSelect & {
-  items: (typeof tItems.$inferSelect & { starred: boolean })[];
-};
+export async function getFeed(id: number) {
+  const result = await db.select().from(tFeeds).where(eq(tFeeds.id, id));
+  if (!result.length) return null;
 
-export async function getFeedWithItems(id: number): Promise<FeedWithItems> {
-  const result = await db
-    .select({ feed: tFeeds, item: tItems, starred: tStarredItems })
-    .from(tFeeds)
-    .where(eq(tFeeds.id, id))
-    .innerJoin(tItems, eq(tItems.feedId, tFeeds.id))
-    .leftJoin(tStarredItems, eq(tItems.id, tStarredItems.id))
-    .orderBy(desc(tItems.publishedAt))
-    .all();
-
-  return {
-    ...result[0].feed,
-    items: result.map((row) => {
-      return { ...row.item, starred: row.starred != null };
-    }),
-  };
+  return result[0];
 }
 
 export async function removeFeed(id: number) {

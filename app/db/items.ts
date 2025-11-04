@@ -22,35 +22,54 @@ export async function insertUnreadItem(insertValues: ItemInsert) {
   return insItem;
 }
 
-const selectItemWithFeed = {
-  id: tItems.id,
-  title: tItems.title,
-  link: tItems.link,
-  publishedAt: tItems.publishedAt,
-  feedId: tItems.feedId,
-  feed: {
-    id: tFeeds.id,
-    title: tFeeds.title,
-    link: tFeeds.link,
-  },
-};
-
-export async function getAllUnreadItems(): Promise<ItemWithFeed[]> {
-  return db
-    .select(selectItemWithFeed)
+export async function getAllUnreadItems() {
+  const result = await db
+    .select({
+      item: tItems,
+      feed: tFeeds,
+      starred: tStarredItems,
+    })
     .from(tUnreadItems)
     .innerJoin(tItems, eq(tItems.id, tUnreadItems.id))
     .innerJoin(tFeeds, eq(tItems.feedId, tFeeds.id))
+    .leftJoin(tStarredItems, eq(tItems.id, tStarredItems.id))
     .orderBy(desc(tItems.publishedAt));
+
+  return result.map((row) => ({
+    ...row.item,
+    feed: row.feed,
+    starred: row.starred != null,
+  }));
 }
 
 export async function getAllStarredItems(): Promise<ItemWithFeed[]> {
-  return db
-    .select(selectItemWithFeed)
+  const result = await db
+    .select({ item: tItems, feed: tFeeds })
     .from(tStarredItems)
     .innerJoin(tItems, eq(tItems.id, tStarredItems.id))
     .innerJoin(tFeeds, eq(tItems.feedId, tFeeds.id))
     .orderBy(desc(tItems.publishedAt));
+
+  return result.map((row) => ({
+    ...row.item,
+    feed: row.feed,
+    starred: true,
+  }));
+}
+export async function getFeedItems(id: number) {
+  const [feed] = await db.select().from(tFeeds).where(eq(tFeeds.id, id));
+  const result = await db
+    .select({ item: tItems, starred: tStarredItems })
+    .from(tItems)
+    .where(eq(tItems.feedId, id))
+    .leftJoin(tStarredItems, eq(tItems.id, tStarredItems.id))
+    .orderBy(desc(tItems.publishedAt));
+
+  return result.map((row) => ({
+    ...row.item,
+    feed,
+    starred: row.starred !== null,
+  }));
 }
 
 export async function markItemAsRead(id: number) {

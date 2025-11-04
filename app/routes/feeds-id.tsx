@@ -4,13 +4,14 @@ import { Form, redirect, useSubmit } from "react-router";
 
 import { ensureUser } from "~/sessions.server";
 import { ROUTES } from "~/routes";
-import { getFeedWithItems, removeFeed } from "~/db/feeds";
+import { getFeed, removeFeed } from "~/db/feeds";
 import ItemCard from "~/items/components/ItemCard";
 import MarkAsStarred from "~/items/components/MarkAsStarred";
 import MarkAsUnstarred from "~/items/components/MarkAsUnstarred";
 import Button from "~/ui/button";
 import { MailX } from "lucide-react";
 import Navbar from "~/ui/navbar";
+import { getFeedItems } from "~/db/items";
 
 export async function loader({ request, params }: Route.LoaderArgs) {
   const user = await ensureUser(request);
@@ -18,8 +19,13 @@ export async function loader({ request, params }: Route.LoaderArgs) {
 
   const { id } = params;
 
-  const feed = await getFeedWithItems(parseInt(id));
-  return { feed };
+  const feed = await getFeed(parseInt(id));
+  if (!feed)
+    return new Response(`Feed with id ${id} not found`, { status: 404 });
+
+  const items = await getFeedItems(parseInt(id));
+
+  return { feed, items };
 }
 
 export async function action({ request, params }: Route.ActionArgs) {
@@ -31,8 +37,8 @@ export async function action({ request, params }: Route.ActionArgs) {
 }
 
 export default function FeedsId({ loaderData }: Route.ComponentProps) {
-  const { feed } = loaderData;
-  const [items, setItems] = useState(feed.items);
+  const { feed, items: feedItems } = loaderData;
+  const [items, setItems] = useState(feedItems);
   const submit = useSubmit();
 
   function optimisticallyToggleStar(itemId: number) {
