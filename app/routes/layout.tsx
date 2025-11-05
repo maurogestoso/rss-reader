@@ -44,9 +44,20 @@ export default function AppLayout({ loaderData }: Route.ComponentProps) {
           </div>
         </div>
       </header>
-      <main className="mt-4 mx-auto max-w-5xl px-2">
+      <main className="mt-4 mx-auto max-w-5xl px-2 pb-20">
         <Outlet />
       </main>
+      <footer className="bg-stone-200 py-4  mt-6 absolute bottom-0 w-full">
+        <div className="mx-auto max-w-5xl flex justify-center gap-4">
+          <p>Built with ☕ by Mauro</p>
+          <a
+            href="https://github.com/maurogestoso/rss-reader"
+            className="underline"
+          >
+            {"<SourceCode />"}
+          </a>
+        </div>
+      </footer>
     </>
   );
 }

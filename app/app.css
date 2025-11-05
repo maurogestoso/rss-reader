@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 body {
+  min-height: 100vh;
+  position: relative;
+  margin: 0;
+
   font-family:
     system-ui,
     -apple-system,
