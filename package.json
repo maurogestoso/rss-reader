@@ -8,6 +8,7 @@
     "start": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc",
     "db:studio": "npx dotenvx run -f .env.local -- npx drizzle-kit studio",
+    "db:studio:prod": "npx dotenvx run -f .env.production -- npx drizzle-kit studio",
     "db:push": "npx dotenvx run -f .env.local -- npx drizzle-kit push",
     "db:push:prod": "npx dotenvx run -f .env.production -- npx drizzle-kit push"
   },
