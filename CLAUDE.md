@@ -1,0 +1,1 @@
+- When implementing an action that calls an API endpoint, use the <Form> component with the action attribute.
