@@ -75,7 +75,7 @@ function UnsubscribeAction({ feed }: { feed: Feed }) {
     const ok = confirm(`Unsubscribe from ${feed.title}?`);
     if (ok) {
       submit(e.currentTarget, {
-        action: ROUTES.FEEDS_ID,
+        action: ROUTES.FEEDS_ID.replace(":id", feed.id.toString()),
         method: "DELETE",
       });
     }
