@@ -13,16 +13,12 @@ export async function loader({ request }: Route.LoaderArgs) {
 
   const feeds = await getAllFeeds();
 
-  const lastUpdate = feeds[0].updatedAt;
-  const today = new Date();
-  const isUpdateDisabled = lastUpdate
-    ? today.getDate() - lastUpdate.getDate() <= 1
-    : false;
-  return { feeds, isUpdateDisabled };
+  const lastUpdate = feeds[0]?.updatedAt;
+  return { feeds, lastUpdate };
 }
 
 export default function Feeds({ loaderData }: Route.ComponentProps) {
-  const { feeds, isUpdateDisabled } = loaderData;
+  const { feeds, lastUpdate } = loaderData;
   return (
     <>
       <Navbar />
@@ -32,8 +28,12 @@ export default function Feeds({ loaderData }: Route.ComponentProps) {
             <MailPlus className="size-4" /> Add Feed
           </Button>
         </Link>
-        <UpdateFeeds disabled={isUpdateDisabled} />
-        {isUpdateDisabled && <span>Already up to date</span>}
+        <UpdateFeeds />
+        {lastUpdate && (
+          <span className="text-sm text-gray-600">
+            Last updated: {new Date(lastUpdate).toLocaleString()}
+          </span>
+        )}
       </div>
       <section className="flex flex-col gap-2 mt-4">
         {feeds.length ? (
@@ -55,14 +55,14 @@ export default function Feeds({ loaderData }: Route.ComponentProps) {
   );
 }
 
-function UpdateFeeds({ disabled }: { disabled?: boolean }) {
+function UpdateFeeds() {
   const fetcher = useFetcher();
   const loading = fetcher.state != "idle";
   return (
     <fetcher.Form method="POST" action="/api/feeds/update-all">
       <Button
         className="bg-blue-600 text-white hover:bg-blue-500"
-        disabled={loading || disabled}
+        disabled={loading}
       >
         <RefreshCw className={`size-4 ${loading && "animate-spin"}`} /> Update
         feeds
