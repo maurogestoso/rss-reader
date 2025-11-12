@@ -1,9 +1,10 @@
-import { redirect, Form } from "react-router";
+import { redirect, Form, useSubmit, Link } from "react-router";
 import type { Route } from "./+types/account";
 
 import { destroySession, ensureUser, getSession } from "~/sessions.server";
 import Button from "~/ui/button";
 import { DoorOpen, Download } from "lucide-react";
+import { ROUTES } from "~/routes";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await ensureUser(request);
@@ -35,14 +36,14 @@ export default function Account({ loaderData }: Route.ComponentProps) {
 
 function ExportFeedsAction() {
   return (
-    <Form action="/api/feeds/export-opml" method="GET">
+    <Link reloadDocument to={ROUTES.API.FEEDS.EXPORT_OPML}>
       <Button
         type="submit"
         className="bg-blue-600 text-white hover:bg-blue-500"
       >
         <Download className="size-4" /> Export Feeds
       </Button>
-    </Form>
+    </Link>
   );
 }
 
