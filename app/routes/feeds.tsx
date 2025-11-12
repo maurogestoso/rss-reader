@@ -25,13 +25,16 @@ export default function Feeds({ loaderData }: Route.ComponentProps) {
   const { feeds, isUpdateDisabled } = loaderData;
   return (
     <>
-      <section className="flex justify-between items-center">
-        <Navbar />
-        <div className="flex gap-2 items-center mt-4">
-          <UpdateFeeds disabled={isUpdateDisabled} />
-          {isUpdateDisabled && <span>Already up to date</span>}
-        </div>
-      </section>
+      <Navbar />
+      <div className="mt-4 flex gap-2 items-center">
+        <Link to="/add-feed">
+          <Button className="bg-orange-600 text-white hover:bg-orange-500">
+            <MailPlus className="size-4" /> Add Feed
+          </Button>
+        </Link>
+        <UpdateFeeds disabled={isUpdateDisabled} />
+        {isUpdateDisabled && <span>Already up to date</span>}
+      </div>
       <section className="flex flex-col gap-2 mt-4">
         {feeds.length ? (
           feeds.map((feed) => <FeedCard key={feed.id} feed={feed} />)
