@@ -1,4 +1,4 @@
-import { redirect } from "react-router";
+import { redirect, Form } from "react-router";
 import type { Route } from "./+types/account";
 
 import { destroySession, ensureUser, getSession } from "~/sessions.server";
@@ -22,26 +22,36 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Account({ loaderData }: Route.ComponentProps) {
-  const handleExportOPML = () => {
-    window.location.href = "/api/feeds/export-opml";
-  };
-
   return (
     <>
       <div className="flex gap-2">
-        <Button
-          onClick={handleExportOPML}
-          className="bg-blue-600 text-white hover:bg-blue-500"
-        >
-          <Download className="size-4" /> Export Feeds
-        </Button>
-        <form method="POST">
-          <Button className="bg-red-600 text-white">
-            <DoorOpen className="size-4" /> Log out
-          </Button>
-        </form>
+        <ExportFeedsAction />
+        <LogoutAction />
       </div>
       <hr className="mt-4 border-stone-500" />
     </>
+  );
+}
+
+function ExportFeedsAction() {
+  return (
+    <Form action="/api/feeds/export-opml" method="GET">
+      <Button
+        type="submit"
+        className="bg-blue-600 text-white hover:bg-blue-500"
+      >
+        <Download className="size-4" /> Export Feeds
+      </Button>
+    </Form>
+  );
+}
+
+function LogoutAction() {
+  return (
+    <form method="POST">
+      <Button className="bg-red-600 text-white">
+        <DoorOpen className="size-4" /> Log out
+      </Button>
+    </form>
   );
 }
