@@ -41,8 +41,8 @@ export default function FeedsId({ loaderData }: Route.ComponentProps) {
   return (
     <>
       <Navbar />
-      <div className="mt-4 flex justify-between items-center">
-        <h2 className="font-bold text-2xl">{feed.title}</h2>
+      <h2 className="mt-4 font-bold text-2xl">{feed.title}</h2>
+      <div className="mt-4 flex gap-2 items-center">
         <UnsubscribeAction feed={feed} />
       </div>
       <section className="flex flex-col gap-2 mt-4">
@@ -71,6 +71,7 @@ function UnsubscribeAction({ feed }: { feed: Feed }) {
   const submit = useSubmit();
 
   function handleUnsuscribe(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     const ok = confirm(`Unsubscribe from ${feed.title}?`);
     if (ok) {
       submit(e.currentTarget, {
