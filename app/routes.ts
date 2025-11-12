@@ -21,6 +21,7 @@ export const ROUTES = {
     },
     FEEDS: {
       UPDATE_ALL: "/api/feeds/update-all",
+      EXPORT_OPML: "/api/feeds/export-opml",
     },
   },
 };
@@ -41,5 +42,6 @@ export default [
       "routes/api/items/mark-unstarred.ts",
     ),
     route(ROUTES.API.FEEDS.UPDATE_ALL, "routes/api/feeds/update-all.ts"),
+    route(ROUTES.API.FEEDS.EXPORT_OPML, "routes/api/feeds/export-opml.ts"),
   ]),
 ] satisfies RouteConfig;

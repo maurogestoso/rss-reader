@@ -3,7 +3,7 @@ import type { Route } from "./+types/account";
 
 import { destroySession, ensureUser, getSession } from "~/sessions.server";
 import Button from "~/ui/button";
-import { DoorOpen } from "lucide-react";
+import { DoorOpen, Download } from "lucide-react";
 
 export async function loader({ request }: Route.LoaderArgs) {
   const user = await ensureUser(request);
@@ -22,13 +22,25 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Account({ loaderData }: Route.ComponentProps) {
+  const handleExportOPML = () => {
+    window.location.href = "/api/feeds/export-opml";
+  };
+
   return (
     <>
-      <form method="POST">
-        <Button className="bg-red-600 text-white">
-          <DoorOpen className="size-4" /> Log out
+      <div className="flex gap-2">
+        <Button
+          onClick={handleExportOPML}
+          className="bg-blue-600 text-white hover:bg-blue-500"
+        >
+          <Download className="size-4" /> Export Feeds
         </Button>
-      </form>
+        <form method="POST">
+          <Button className="bg-red-600 text-white">
+            <DoorOpen className="size-4" /> Log out
+          </Button>
+        </form>
+      </div>
       <hr className="mt-4 border-stone-500" />
     </>
   );
